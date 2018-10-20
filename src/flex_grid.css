@@ -1,0 +1,285 @@
+/* Based on 
+    Flexbox Grid : https://github.com/kristoferjoseph/flexboxgrid and 
+    Gridlex https://github.com/devlint/gridlex
+*/
+
+:root {
+    --container_width: 1280px;
+    --container_padding: 20px;
+    --grid_gutter: 5px;
+    --grid_col_base: 8.33%; /* calc( 100% / 12) IE11 fix */
+}
+
+/* ==========================================================================
+    LAYOUT
+   ========================================================================== */
+
+.container,
+.container-fluid {
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: calc(var(--container_padding));
+    padding-left: calc(var(--container_padding));
+}
+
+.container { max-width: var(--container_width); }
+
+.row {
+    @media (min-width: 641px){
+        box-sizing: border-box;
+        display: flex;
+        flex: 0 1 auto;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    margin-right: calc(-1 * var(--grid_gutter));
+    margin-left: calc(-1 * var(--grid_gutter));
+}
+
+/* ==========================================================================
+    GRID
+   ========================================================================== */
+
+[class*=col]{
+    display: block;
+    width: 100%;
+    padding-right: var(--grid_gutter);
+    padding-left: var(--grid_gutter);
+}
+
+[class*=col-hidden]{ display: none; }
+
+@each $device, $viewport in (xs, sm, md, lg), (641, 769, 1025, 1281) {
+    
+    @media (min-width: $(viewport)px){
+            
+        [class*=col-$(device)]{
+            width: auto;
+            box-sizing: border-box;
+            flex: 0 0 auto;
+            padding-right: var(--grid_gutter);
+            padding-left: var(--grid_gutter);    
+        }
+
+        .col-$(device) { 
+            flex-grow: 1;
+            flex-basis: 0;
+            max-width: 100%;
+        }
+
+        /* Columns width */
+
+        @for $i from 1 to 12 {
+
+            .col-$(device)-$(i) { 
+                flex-basis: calc( var(--grid_col_base) * $(i) );
+                max-width: calc( var(--grid_col_base) * $(i) );
+            }
+
+            .col-fixed-$(device)-$(i){
+                width: calc( (var(--container_width) / 12) * $(i) );
+            }
+        }
+
+        /* Columns offset */
+
+        @for $i from 1 to 12 {
+
+            .col-$(device)-offset-$(i) {
+                margin-left: calc( var(--grid_col_base) * $(i) );
+            }
+        }
+
+        /* Hidden columns */
+        .col-hidden-$(device) { display: flex; }
+        
+        /* Position */
+
+        .start-$(device) {
+            display: flex;
+            justify-content: flex-start;
+            text-align: start;
+        }
+
+        .center-$(device) {
+            display: flex;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .end-$(device) {
+            display: flex;
+            justify-content: flex-end;
+            text-align: end;
+        }
+
+        .top-$(device) {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .middle-$(device) {
+            display: flex;
+            align-items: center;
+        }
+
+        .bottom-$(device) {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        /* Distribution */
+
+        .around-$(device) {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .between-$(device) {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Full Height */
+
+        .fullHeight-$(device) {
+            & > [class*=col]{
+                min-height: 100vh;
+            }
+        }
+
+        /* Order */
+
+        .first-$(device) { order: -1; }
+
+        .last-$(device) { order: 1; }    
+    }
+}
+
+/* ==========================================================================
+    NO GUTTER
+   ========================================================================== */
+
+.row {
+    &.noGutter {
+        margin: 0;
+        & > [class*=col]{
+            padding-left: 0;
+            padding-right: 0;
+        }
+    }
+}
+
+.container,
+.container-fluid {
+    &.noGutter {
+        padding-left: 0;
+        padding-right: 0;
+        .row {
+            margin-left: 0;
+            margin-right: 0;
+            & > [class*=col]{
+                padding-left: 0;
+                padding-right: 0;
+            }
+        }
+    }
+}
+
+/* ==========================================================================
+    FULL HEIGHT
+   ========================================================================== */
+
+.row {
+    &.fullHeight {
+        & > [class*=col]{
+            min-height: 100vh;
+        }
+    }
+}
+
+/* ==========================================================================
+    EQUAL HEIGHT
+   ========================================================================== */
+
+.row {
+    &.equalHeight {
+        & > [class*=col]{
+            display: flex;
+            flex-wrap: wrap;
+            & > *{
+                flex: 1 0 100%;
+            }
+        }
+    }
+}
+
+/* ==========================================================================
+    POSITION
+   ========================================================================== */
+
+.row {
+    & > .start {
+        display: flex;
+        justify-content: flex-start;
+        text-align: start;
+    }
+
+    & > .center {
+        display: flex;
+        justify-content: center;
+        text-align: center;
+    }
+
+    & > .end {
+        display: flex;
+        justify-content: flex-end;
+        text-align: end;
+    }
+
+    & > .top {
+        display: flex;
+        align-items: flex-start;
+    }
+
+    & > .middle {
+        display: flex;
+        align-items: center;
+    }
+
+    & > .bottom {
+        display: flex;
+        align-items: flex-end;
+    }
+}
+
+/* ==========================================================================
+    DISTRIBUTION
+   ========================================================================== */
+
+.row {
+    &.spaceBetween {
+        justify-content: space-between;
+    }
+
+    &.spaceAround {
+        justify-content: space-around;
+    }
+
+    &.center {
+        justify-content: center;
+    }
+}
+
+/* ==========================================================================
+    REVERSE
+   ========================================================================== */
+
+.row.reverse {
+    flex-direction: row-reverse;
+}
+
+.col.reverse {
+    flex-direction: column-reverse;
+}
